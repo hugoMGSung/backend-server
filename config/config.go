@@ -9,7 +9,7 @@ import (
 // 설정 구조체
 type Config struct {
 	Server struct {
-		Port int64
+		Port string
 	}
 }
 
