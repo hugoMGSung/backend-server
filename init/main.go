@@ -18,7 +18,7 @@ func main() {
 	// }
 	flag.Parse()
 
-	cmd.NewCmd(*configPathFlag)
+	cmd.NewCmd(*configPathFlag) // 설정, 네트워크 실행
 	fmt.Println("서버종료")
 }
 
