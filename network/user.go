@@ -1,6 +1,7 @@
 package network
 
 import (
+	"backend-server/service"
 	"backend-server/types"
 	"fmt"
 	"sync"
@@ -16,12 +17,15 @@ var (
 type userRouter struct {
 	router *Network
 	// service 추가예정
+
+	userService *service.User
 }
 
-func newUserRouter(router *Network) *userRouter {
+func newUserRouter(router *Network, userService *service.User) *userRouter {
 	userRouterInit.Do(func() {
 		userRouterInstance = &userRouter{
-			router: router,
+			router:      router,
+			userService: userService,
 		}
 
 		// 사용할 CRUD 함수 등록
@@ -46,6 +50,8 @@ func newUserRouter(router *Network) *userRouter {
 // func fff(w http.ResponseWriter, r *http.Request) 와 동일
 func (u *userRouter) create(c *gin.Context) {
 	fmt.Println("POST 메서드입니다")
+
+	u.userService.Create(nil)
 
 	u.router.okResponse(c, &types.CreateUserResponse{
 		ApiResponse: types.NewApiResponse("POST 성공입니다", 1),
@@ -75,11 +81,14 @@ func (u *userRouter) get(c *gin.Context) {
 	// })
 	u.router.okResponse(c, &types.GetUserResponse{
 		ApiResponse: types.NewApiResponse("GET 성공입니다", 1),
+		Users:       u.userService.Get(),
 	})
 }
 
 func (u *userRouter) update(c *gin.Context) {
 	fmt.Println("PUT 메서드입니다")
+
+	u.userService.Update(nil, nil)
 
 	u.router.okResponse(c, &types.UpdateUserResponse{
 		ApiResponse: types.NewApiResponse("PUT 성공입니다", 1),
@@ -88,6 +97,8 @@ func (u *userRouter) update(c *gin.Context) {
 
 func (u *userRouter) delete(c *gin.Context) {
 	fmt.Println("DELETE 메서드입니다")
+
+	u.userService.Delete(nil)
 
 	u.router.okResponse(c, &types.DeleteUserResponse{
 		ApiResponse: types.NewApiResponse("DELETE 성공입니다", 1),

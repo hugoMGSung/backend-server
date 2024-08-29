@@ -1,21 +1,25 @@
 package network
 
 import (
+	"backend-server/service"
+
 	"github.com/gin-gonic/gin"
 )
 
 type Network struct {
 	engine *gin.Engine
+
+	service *service.Service
 }
 
-func NewNetwork() *Network {
+func NewNetwork(service *service.Service) *Network {
 	r := &Network{
 		engine: gin.New(),
 	}
 
 	// newUserRouter를 두번 호출해도 한번만 동작
 	// r.engine.Run(":8080")
-	newUserRouter(r)
+	newUserRouter(r, service.User)
 	return r
 }
 
