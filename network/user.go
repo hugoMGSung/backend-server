@@ -48,16 +48,6 @@ func newUserRouter(router *Network, userService *service.User) *userRouter {
 // 매개변수에 반드시 gin.Context가 들어가야함
 // http.HandleFunc("/", fff)
 // func fff(w http.ResponseWriter, r *http.Request) 와 동일
-func (u *userRouter) create(c *gin.Context) {
-	fmt.Println("POST 메서드입니다")
-
-	u.userService.Create(nil)
-
-	u.router.okResponse(c, &types.CreateUserResponse{
-		ApiResponse: types.NewApiResponse("POST 성공입니다", 1),
-	})
-}
-
 func (u *userRouter) get(c *gin.Context) {
 	fmt.Println("GET 메서드입니다")
 
@@ -80,27 +70,67 @@ func (u *userRouter) get(c *gin.Context) {
 	// 	User: nil,
 	// })
 	u.router.okResponse(c, &types.GetUserResponse{
-		ApiResponse: types.NewApiResponse("GET 성공입니다", 1),
+		ApiResponse: types.NewApiResponse("GET 성공입니다", 1, nil),
 		Users:       u.userService.Get(),
 	})
 }
 
+func (u *userRouter) create(c *gin.Context) {
+	fmt.Println("POST 메서드입니다")
+	var req types.CreateRequest
+
+	// URL, Query 검증
+	// c.ShouldBindUri(); c.ShouldBindQuery() // ...
+	// 요청검증
+	if err := c.ShouldBindJSON(&req); err != nil {
+		u.router.failResponse(c, &types.CreateUserResponse{
+			ApiResponse: types.NewApiResponse("POST 바인딩오류!", -1, err.Error()),
+		})
+	} else if u.userService.Create(req.ToUser()); err != nil {
+		u.router.failResponse(c, &types.CreateUserResponse{
+			ApiResponse: types.NewApiResponse("Create POST오류!", -1, err.Error()),
+		})
+	} else {
+		u.router.okResponse(c, &types.CreateUserResponse{
+			ApiResponse: types.NewApiResponse("POST 성공입니다", 1, nil),
+		})
+	}
+}
+
 func (u *userRouter) update(c *gin.Context) {
 	fmt.Println("PUT 메서드입니다")
+	var req types.UpdateRequest
 
-	u.userService.Update(nil, nil)
-
-	u.router.okResponse(c, &types.UpdateUserResponse{
-		ApiResponse: types.NewApiResponse("PUT 성공입니다", 1),
-	})
+	if err := c.ShouldBindJSON(&req); err != nil {
+		u.router.failResponse(c, &types.UpdateUserResponse{
+			ApiResponse: types.NewApiResponse("PUT 바인딩오류!", -1, err.Error()),
+		})
+	} else if err = u.userService.Update(req.Name, req.UpdatedAge); err != nil {
+		u.router.failResponse(c, &types.UpdateUserResponse{
+			ApiResponse: types.NewApiResponse("Update PUT오류!", -1, err.Error()),
+		})
+	} else {
+		u.router.okResponse(c, &types.UpdateUserResponse{
+			ApiResponse: types.NewApiResponse("PUT 성공입니다", 1, nil),
+		})
+	}
 }
 
 func (u *userRouter) delete(c *gin.Context) {
 	fmt.Println("DELETE 메서드입니다")
+	var req types.DeleteRequest
 
-	u.userService.Delete(nil)
-
-	u.router.okResponse(c, &types.DeleteUserResponse{
-		ApiResponse: types.NewApiResponse("DELETE 성공입니다", 1),
-	})
+	if err := c.ShouldBindJSON(&req); err != nil {
+		u.router.failResponse(c, &types.DeleteUserResponse{
+			ApiResponse: types.NewApiResponse("DELETE 바인딩오류!", -1, err.Error()),
+		})
+	} else if err = u.userService.Delete(req.ToUser()); err != nil {
+		u.router.failResponse(c, &types.DeleteUserResponse{
+			ApiResponse: types.NewApiResponse("DELETE 오류!", -1, err.Error()),
+		})
+	} else {
+		u.router.okResponse(c, &types.DeleteUserResponse{
+			ApiResponse: types.NewApiResponse("DELETE 성공입니다", 1, nil),
+		})
+	}
 }
