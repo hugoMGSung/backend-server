@@ -1,6 +1,7 @@
 package network
 
 import (
+	"backend-server/types"
 	"fmt"
 	"sync"
 
@@ -45,19 +46,50 @@ func newUserRouter(router *Network) *userRouter {
 // func fff(w http.ResponseWriter, r *http.Request) 와 동일
 func (u *userRouter) create(c *gin.Context) {
 	fmt.Println("POST 메서드입니다")
+
+	u.router.okResponse(c, &types.CreateUserResponse{
+		ApiResponse: types.NewApiResponse("POST 성공입니다", 1),
+	})
 }
 
 func (u *userRouter) get(c *gin.Context) {
 	fmt.Println("GET 메서드입니다")
 
+	// c.JSON(200, "Succeed!") // 여기를 utils.go 아래 okResponse로 변경
+	// u.router.okResponse(c, "OK 테스트입니다")
+	//type ApiResponse struct {
+	// 	Result      int64  `json:"result"`
+	// 	Description string `json:"description"`
+	// }
+	// u.router.okResponse(c, &types.ApiResponse{
+	// 	Result:      1,
+	// 	Description: "GET 메서드 성공!",
+	// })
+	// UserResponse를 사용한다면
+	// u.router.okResponse(c, &types.UserResponse{
+	// 	ApiResponse: &types.ApiResponse{
+	// 		Result:      1,
+	// 		Description: "GET 메서드 성공!",
+	// 	},
+	// 	User: nil,
+	// })
+	u.router.okResponse(c, &types.GetUserResponse{
+		ApiResponse: types.NewApiResponse("GET 성공입니다", 1),
+	})
 }
 
 func (u *userRouter) update(c *gin.Context) {
 	fmt.Println("PUT 메서드입니다")
 
+	u.router.okResponse(c, &types.UpdateUserResponse{
+		ApiResponse: types.NewApiResponse("PUT 성공입니다", 1),
+	})
 }
 
 func (u *userRouter) delete(c *gin.Context) {
 	fmt.Println("DELETE 메서드입니다")
 
+	u.router.okResponse(c, &types.DeleteUserResponse{
+		ApiResponse: types.NewApiResponse("DELETE 성공입니다", 1),
+	})
 }

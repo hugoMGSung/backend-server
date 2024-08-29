@@ -30,21 +30,3 @@ func (n *Network) ServerStart(port string) error {
 //	userRouterInstance.router.engine.GET("/", userRouterInstance.get)
 //
 // v0.5.1 레지스터 함수 등록
-func (n *Network) regPOST(path string, handler ...gin.HandlerFunc) gin.IRoutes {
-	return n.engine.POST(path, handler...)
-}
-
-func (n *Network) regGET(path string, handler ...gin.HandlerFunc) gin.IRoutes {
-	return n.engine.GET(path, handler...)
-
-}
-
-func (n *Network) regUPDATE(path string, handler ...gin.HandlerFunc) gin.IRoutes {
-	return n.engine.PUT(path, handler...)
-
-}
-
-func (n *Network) regDELETE(path string, handler ...gin.HandlerFunc) gin.IRoutes {
-	return n.engine.DELETE(path, handler...)
-
-}
